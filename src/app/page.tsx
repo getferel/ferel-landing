@@ -74,9 +74,9 @@ function Navbar() {
               <a href="#pulse" className="hover:text-primary transition-colors">Pulse</a>
               <a href="#macro" className="hover:text-primary transition-colors">Macro</a>
               <a href="#about" className="hover:text-primary transition-colors">About</a>
-              <a href="#download" className="bg-primary hover:bg-accent text-background px-4 py-2 rounded-lg font-semibold transition-all">
+              <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-accent text-background px-4 py-2 rounded-lg font-semibold transition-all">
                 Get Early Access
-              </a>
+              </button>
             </div>
           </div>
           
@@ -138,6 +138,7 @@ function Hero() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => setIsModalOpen(true)}
                 className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
                 <span>Get Early Access</span>
@@ -338,7 +339,10 @@ function Pulse() {
           className="text-center mt-12"
         >
           <p className="text-gray-400 mb-6">This is just a sample. Get full access to the live feed.</p>
-          <button className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all"
+          >
             Join Waitlist
           </button>
         </motion.div>
@@ -521,7 +525,7 @@ function Footer() {
               <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
               <li><a href="#pulse" className="hover:text-primary transition-colors">Pulse</a></li>
               <li><a href="#macro" className="hover:text-primary transition-colors">Macro</a></li>
-              <li><a href="#download" className="hover:text-primary transition-colors">Early Access</a></li>
+              <li><button onClick={() => setIsModalOpen(true)} className="hover:text-primary transition-colors">Early Access</button></li>
             </ul>
           </div>
           
