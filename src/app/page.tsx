@@ -144,15 +144,6 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
                 <span>Get Early Access</span>
                 <ArrowRight size={20} />
               </motion.button>
-              
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="glass-card hover:bg-secondary px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
-              >
-                <span>Learn More</span>
-                <ArrowRight size={20} />
-              </motion.button>
             </div>
             
             <div className="pt-4 flex items-center gap-6 text-sm text-gray-400">
@@ -489,15 +480,6 @@ function CTA({ onOpen }: { onOpen: () => void }) {
                 <span>Get Early Access</span>
                 <ArrowRight size={20} />
               </motion.button>
-              
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="glass-card hover:bg-secondary px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
-              >
-                <span>View Sample Feed</span>
-                <ArrowRight size={20} />
-              </motion.button>
             </div>
           </div>
         </motion.div>
@@ -513,8 +495,8 @@ function Footer({ onOpenModal }: { onOpenModal: () => void }) {
       <div className="max-w-7xl mx-auto">
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           <div className="md:col-span-2">
-            <span className="text-2xl font-bold gradient-text">Ferel</span>
-            <p className="text-gray-400 mt-4 max-w-md">
+            <img src="/logo.svg" alt="Ferel" className="h-8 w-auto mb-4" />
+            <p className="text-gray-400 max-w-md">
               Curated news intelligence for decision makers. High-signal macro and geopolitical coverage.
             </p>
           </div>
