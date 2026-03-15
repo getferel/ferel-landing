@@ -17,6 +17,7 @@ import {
   Clock
 } from "lucide-react";
 import { useState } from "react";
+import EarlyAccessModal from "@/components/EarlyAccessModal";
 
 // Timeline/Feed component for news pulse
 function NewsPulseItem({ time, headline, impact, category }: { time: string; headline: string; impact: "Critical" | "High" | "Neutral"; category: string }) {
@@ -454,7 +455,7 @@ function About() {
 }
 
 // CTA Section
-function CTA() {
+function CTA({ onOpen }: { onOpen: () => void }) {
   return (
     <section id="download" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
@@ -478,6 +479,7 @@ function CTA() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={onOpen}
                 className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
                 <span>Get Early Access</span>
@@ -543,15 +545,18 @@ function Footer() {
 
 // Main Page
 export default function Page() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen">
       <Navbar />
+      <EarlyAccessModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <Hero />
       <Features />
       <Pulse />
       <Macro />
       <About />
-      <CTA />
+      <CTA onOpen={() => setIsModalOpen(true)} />
       <Footer />
     </div>
   );
