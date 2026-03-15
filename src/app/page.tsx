@@ -108,7 +108,7 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
 }
 
 // Hero Section
-function Hero() {
+function Hero({ onOpenModal }: { onOpenModal: () => void }) {
   return (
     <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
       
@@ -138,7 +138,7 @@ function Hero() {
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsModalOpen(true)}
+                onClick={onOpenModal}
                 className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
                 <span>Get Early Access</span>
@@ -294,7 +294,7 @@ function Features() {
 }
 
 // Pulse Section - Live Feed
-function Pulse() {
+function Pulse({ onOpenModal }: { onOpenModal: () => void }) {
   const newsItems = [
     { time: "2 min ago", headline: "RBI announces unexpected policy shift on repo rates", impact: "Critical", category: "Monetary Policy" },
     { time: "15 min ago", headline: "New trade agreement signed between India and UAE", impact: "High", category: "Global Trade" },
@@ -340,7 +340,7 @@ function Pulse() {
         >
           <p className="text-gray-400 mb-6">This is just a sample. Get full access to the live feed.</p>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={onOpenModal}
             className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all"
           >
             Join Waitlist
@@ -555,9 +555,9 @@ export default function Page() {
     <div className="min-h-screen">
       <Navbar onOpenModal={() => setIsModalOpen(true)} />
       <EarlyAccessModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-      <Hero />
+      <Hero onOpenModal={() => setIsModalOpen(true)} />
       <Features />
-      <Pulse />
+      <Pulse onOpenModal={() => setIsModalOpen(true)} />
       <Macro />
       <About />
       <CTA onOpen={() => setIsModalOpen(true)} />
