@@ -2,33 +2,56 @@
 
 import { motion } from "framer-motion";
 import { 
-  TrendingUp, 
+  Globe, 
   Brain, 
   Zap, 
   Bell, 
-  Globe, 
-  BarChart3,
+  TrendingUp,
+  Shield,
+  Layers,
+  Target,
   ArrowRight,
   Menu,
-  X
+  X,
+  CheckCircle,
+  Clock
 } from "lucide-react";
 import { useState } from "react";
 
-// Sparkline component for market indices
-function Sparkline({ data, color = "#10B981" }: { data: number[]; color?: string }) {
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min;
-  const points = data.map((val, i) => {
-    const x = (i / (data.length - 1)) * 200;
-    const y = 50 - ((val - min) / range) * 50;
-    return `${x},${y}`;
-  }).join(" ");
+// Timeline/Feed component for news pulse
+function NewsPulseItem({ time, headline, impact, category }: { time: string; headline: string; impact: "Critical" | "High" | "Neutral"; category: string }) {
+  const impactColors = {
+    Critical: "bg-red-500/20 text-red-400 border-red-500/30",
+    High: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    Neutral: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  };
 
   return (
-    <svg width="200" height="50" className="sparkline">
-      <polyline points={points} stroke={color} strokeWidth="2" fill="none" />
-    </svg>
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      className="glass-card p-4 rounded-xl border-l-4 border-l-primary"
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex-1">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-xs text-gray-400 flex items-center gap-1">
+              <Clock size={12} />
+              {time}
+            </span>
+            <span className="text-xs text-primary">{category}</span>
+          </div>
+          <h4 className="font-semibold mb-2">{headline}</h4>
+          <div className="flex items-center gap-2">
+            <span className={`text-xs px-2 py-1 rounded-full border ${impactColors[impact]}`}>
+              Impact: {impact}
+            </span>
+            <span className="text-xs text-gray-400">Actionable Intelligence</span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -47,10 +70,11 @@ function Navbar() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-8">
               <a href="#features" className="hover:text-primary transition-colors">Features</a>
-              <a href="#markets" className="hover:text-primary transition-colors">Markets</a>
+              <a href="#pulse" className="hover:text-primary transition-colors">Pulse</a>
+              <a href="#macro" className="hover:text-primary transition-colors">Macro</a>
               <a href="#about" className="hover:text-primary transition-colors">About</a>
               <a href="#download" className="bg-primary hover:bg-accent text-background px-4 py-2 rounded-lg font-semibold transition-all">
-                Download
+                Get Early Access
               </a>
             </div>
           </div>
@@ -71,9 +95,10 @@ function Navbar() {
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
             <a href="#features" className="block px-3 py-2 hover:bg-secondary rounded">Features</a>
-            <a href="#markets" className="block px-3 py-2 hover:bg-secondary rounded">Markets</a>
+            <a href="#pulse" className="block px-3 py-2 hover:bg-secondary rounded">Pulse</a>
+            <a href="#macro" className="block px-3 py-2 hover:bg-secondary rounded">Macro</a>
             <a href="#about" className="block px-3 py-2 hover:bg-secondary rounded">About</a>
-            <a href="#download" className="block px-3 py-2 text-primary font-semibold">Download</a>
+            <a href="#download" className="block px-3 py-2 text-primary font-semibold">Get Early Access</a>
           </div>
         </motion.div>
       )}
@@ -98,16 +123,16 @@ function Hero() {
           >
             <div className="inline-flex items-center space-x-2 glass-card px-4 py-2 rounded-full">
               <span className="w-2 h-2 bg-primary rounded-full live-indicator" />
-              <span className="text-sm font-medium">Live Market Intelligence</span>
+              <span className="text-sm font-medium">Live Intelligence Feed</span>
             </div>
             
             <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-              Real-time Market Intelligence,{" "}
-              <span className="gradient-text">Powered by AI</span>
+              Be the First to Know{" "}
+              <span className="gradient-text">What Moves the Markets</span>
             </h1>
             
             <p className="text-xl text-gray-400 max-w-lg">
-              Master the Indian markets with AI-analyzed news and global macro insights delivered to your fingertips.
+              A curated news engine delivering high-signal macro and geopolitical intelligence. We source, analyze, and publish the stories that matter before they become noise.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4">
@@ -116,7 +141,7 @@ function Hero() {
                 whileTap={{ scale: 0.95 }}
                 className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Download on App Store</span>
+                <span>Get Early Access</span>
                 <ArrowRight size={20} />
               </motion.button>
               
@@ -125,13 +150,24 @@ function Hero() {
                 whileTap={{ scale: 0.95 }}
                 className="glass-card hover:bg-secondary px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Get it on Google Play</span>
+                <span>Learn More</span>
                 <ArrowRight size={20} />
               </motion.button>
             </div>
+            
+            <div className="pt-4 flex items-center gap-6 text-sm text-gray-400">
+              <div className="flex items-center gap-2">
+                <CheckCircle size={16} className="text-primary" />
+                <span>AI-Powered Curation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle size={16} className="text-primary" />
+                <span>Editorial Intelligence</span>
+              </div>
+            </div>
           </motion.div>
           
-          {/* Phone Mockup */}
+          {/* Phone Mockup - News Feed UI */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -144,31 +180,31 @@ function Hero() {
               <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[178px] rounded-l-lg"></div>
               <div className="h-[64px] w-[3px] bg-gray-800 absolute -right-[17px] top-[142px] rounded-r-lg"></div>
               <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-background relative">
-                {/* App UI Mockup */}
+                {/* App UI Mockup - News Feed */}
                 <div className="p-4 space-y-4">
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold">Market Overview</h3>
+                    <h3 className="text-lg font-bold">Breaking Intelligence</h3>
                     <span className="text-xs text-primary">LIVE</span>
                   </div>
                   
-                  {/* Market Cards */}
+                  {/* News Cards */}
                   <div className="space-y-3">
-                    <div className="glass-card p-3 rounded-lg">
-                      <div className="text-xs text-gray-400">NIFTY 50</div>
-                      <div className="text-lg font-bold">22,456.75</div>
-                      <div className="text-xs text-primary">+1.2%</div>
+                    <div className="glass-card p-3 rounded-lg border-l-4 border-l-primary">
+                      <div className="text-xs text-gray-400 mb-1">Geopolitical</div>
+                      <div className="text-sm font-semibold">RBI Policy Shift</div>
+                      <div className="text-xs text-red-400 mt-1">Impact: Critical</div>
                     </div>
                     
-                    <div className="glass-card p-3 rounded-lg">
-                      <div className="text-xs text-gray-400">SENSEX</div>
-                      <div className="text-lg font-bold">73,892.40</div>
-                      <div className="text-xs text-primary">+0.9%</div>
+                    <div className="glass-card p-3 rounded-lg border-l-4 border-l-amber-500">
+                      <div className="text-xs text-gray-400 mb-1">Global Macro</div>
+                      <div className="text-sm font-semibold">Trade Agreement Update</div>
+                      <div className="text-xs text-amber-400 mt-1">Impact: High</div>
                     </div>
                     
-                    <div className="glass-card p-3 rounded-lg">
-                      <div className="text-xs text-gray-400">Top Story</div>
-                      <div className="text-sm font-semibold">RBI Policy Impact</div>
-                      <div className="text-xs text-gray-400">High Impact</div>
+                    <div className="glass-card p-3 rounded-lg border-l-4 border-l-gray-500">
+                      <div className="text-xs text-gray-400 mb-1">Market News</div>
+                      <div className="text-sm font-semibold">Sector Analysis</div>
+                      <div className="text-xs text-gray-400 mt-1">Impact: Neutral</div>
                     </div>
                   </div>
                 </div>
@@ -181,38 +217,38 @@ function Hero() {
   );
 }
 
-// Features Section
+// Features Section - Editorial Intelligence
 function Features() {
   const features = [
     {
+      icon: Layers,
+      title: "Editorial Curation",
+      description: "Our team and AI filter out the noise. Only high-signal, market-moving stories make the cut.",
+    },
+    {
       icon: Brain,
-      title: "AI-Analyzed News",
-      description: "Beyond just headlines—sentiment and impact analysis powered by advanced AI.",
+      title: "AI-Powered Analysis",
+      description: "Beyond headlines—sentiment analysis, impact scoring, and contextual intelligence.",
     },
     {
       icon: Globe,
-      title: "Market-Moving Insights",
-      description: "Specialized focus on Indian Equities (NSE/BSE) and Global Macro trends.",
+      title: "Global Macro Focus",
+      description: "Specialized coverage of policy changes, trade news, and international relations.",
+    },
+    {
+      icon: Target,
+      title: "Actionable Intelligence",
+      description: "Every story explains why it matters to investors and what to watch next.",
+    },
+    {
+      icon: Shield,
+      title: "Verified Sources",
+      description: "Curated from premium outlets, official statements, and verified channels only.",
     },
     {
       icon: Zap,
-      title: "Breaking Highlights",
-      description: "Top story feed showing critical impact levels in real-time.",
-    },
-    {
-      icon: BarChart3,
-      title: "Real-time Indices",
-      description: "Visual sparklines for S&P 500, NASDAQ, and Nifty 50.",
-    },
-    {
-      icon: TrendingUp,
-      title: "Smart Alerts",
-      description: "Never miss a market-moving event with intelligent notifications.",
-    },
-    {
-      icon: Bell,
-      title: "Personalized Feed",
-      description: "AI curates content based on your portfolio and interests.",
+      title: "Real-Time Alerts",
+      description: "Be first to know when critical intelligence breaks—before it becomes mainstream.",
     },
   ];
 
@@ -226,11 +262,11 @@ function Features() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-            Intelligence Meets{" "}
-            <span className="gradient-text">Simplicity</span>
+            Intelligence,{" "}
+            <span className="gradient-text">Not Noise</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Everything you need to stay ahead of the markets, distilled into one powerful app.
+            We curate, analyze, and deliver only the stories that move markets. No clickbait, no fluff.
           </p>
         </motion.div>
         
@@ -257,17 +293,17 @@ function Features() {
   );
 }
 
-// Market Data Section
-function Markets() {
-  const indices = [
-    { name: "NIFTY 50", value: "22,456.75", change: "+1.2%", data: [22100, 22200, 22150, 22300, 22400, 22450, 22456] },
-    { name: "SENSEX", value: "73,892.40", change: "+0.9%", data: [73200, 73400, 73350, 73600, 73750, 73850, 73892] },
-    { name: "S&P 500", value: "5,234.18", change: "+0.5%", data: [5180, 5200, 5190, 5210, 5220, 5230, 5234] },
-    { name: "NASDAQ", value: "16,428.82", change: "+0.7%", data: [16200, 16300, 16280, 16350, 16400, 16420, 16428] },
+// Pulse Section - Live Feed
+function Pulse() {
+  const newsItems = [
+    { time: "2 min ago", headline: "RBI announces unexpected policy shift on repo rates", impact: "Critical", category: "Monetary Policy" },
+    { time: "15 min ago", headline: "New trade agreement signed between India and UAE", impact: "High", category: "Global Trade" },
+    { time: "32 min ago", headline: "Tech sector sees institutional buying surge", impact: "High", category: "Market Movement" },
+    { time: "1 hr ago", headline: "Oil prices stabilize amid geopolitical tensions", impact: "Neutral", category: "Commodities" },
   ];
 
   return (
-    <section id="markets" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="pulse" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -276,35 +312,144 @@ function Markets() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-            Global Markets,{" "}
-            <span className="gradient-text">One Dashboard</span>
+            The{" "}
+            <span className="gradient-text">Pulse</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Track Indian and global indices with real-time updates and AI insights.
+            Live feed of curated intelligence. Every story tagged with impact level and actionable context.
           </p>
         </motion.div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {indices.map((index, i) => (
+        <div className="max-w-3xl mx-auto space-y-4">
+          {newsItems.map((item, i) => (
+            <NewsPulseItem
+              key={i}
+              time={item.time}
+              headline={item.headline}
+              impact={item.impact as "Critical" | "High" | "Neutral"}
+              category={item.category}
+            />
+          ))}
+        </div>
+        
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mt-12"
+        >
+          <p className="text-gray-400 mb-6">This is just a sample. Get full access to the live feed.</p>
+          <button className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all">
+            Join Waitlist
+          </button>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Macro & Geopolitical Section
+function Macro() {
+  const macroTopics = [
+    {
+      icon: Globe,
+      title: "Geopolitical Shifts",
+      items: ["International relations", "Trade agreements", "Policy changes", "Diplomatic developments"],
+    },
+    {
+      icon: TrendingUp,
+      title: "Global Macro Trends",
+      items: ["Central bank policies", "Interest rate decisions", "Inflation data", "Economic indicators"],
+    },
+    {
+      icon: Layers,
+      title: "Sector Intelligence",
+      items: ["Industry analysis", "Regulatory updates", "Market positioning", "Competitive landscape"],
+    },
+  ];
+
+  return (
+    <section id="macro" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
+      <div className="max-w-7xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+            Macro &{" "}
+            <span className="gradient-text">Geopolitical</span>
+          </h2>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Deep coverage of the forces that shape markets—from policy rooms to trading floors.
+          </p>
+        </motion.div>
+        
+        <div className="grid md:grid-cols-3 gap-8">
+          {macroTopics.map((topic, index) => (
             <motion.div
-              key={index.name}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              key={topic.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              className="glass-card p-6 rounded-2xl"
+              transition={{ delay: index * 0.1 }}
+              className="glass-card p-8 rounded-2xl"
             >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <div className="text-sm text-gray-400 mb-1">{index.name}</div>
-                  <div className="text-2xl font-bold">{index.value}</div>
-                </div>
-                <div className="text-primary font-semibold">{index.change}</div>
+              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
+                <topic.icon className="w-6 h-6 text-primary" />
               </div>
-              <Sparkline data={index.data} />
+              <h3 className="text-xl font-bold mb-4">{topic.title}</h3>
+              <ul className="space-y-2 text-gray-400">
+                {topic.items.map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <CheckCircle size={16} className="text-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
             </motion.div>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+// About Section
+function About() {
+  return (
+    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center"
+        >
+          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
+            Built for{" "}
+            <span className="gradient-text">Decision Makers</span>
+          </h2>
+          <p className="text-xl text-gray-400 mb-8">
+            Ferel is a curated news intelligence platform by Ferelvian. We combine editorial expertise with AI-powered analysis to deliver only the stories that matter—before they become mainstream noise.
+          </p>
+          
+          <div className="grid md:grid-cols-3 gap-8 mt-12">
+            <div className="text-center">
+              <div className="text-4xl font-bold gradient-text mb-2">100%</div>
+              <div className="text-gray-400">Curated Stories</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold gradient-text mb-2">24/7</div>
+              <div className="text-gray-400">Live Intelligence</div>
+            </div>
+            <div className="text-center">
+              <div className="text-4xl font-bold gradient-text mb-2">0</div>
+              <div className="text-gray-400">Noise & Clickbait</div>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -327,10 +472,10 @@ function CTA() {
           <div className="relative z-10">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
               Ready to{" "}
-              <span className="gradient-text">Master the Markets</span>?
+              <span className="gradient-text">Know First</span>?
             </h2>
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
-              Join thousands of traders and investors using AI-powered intelligence to make smarter decisions.
+              Join early access and get curated market intelligence delivered before it becomes noise.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -339,7 +484,7 @@ function CTA() {
                 whileTap={{ scale: 0.95 }}
                 className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>App Store</span>
+                <span>Get Early Access</span>
                 <ArrowRight size={20} />
               </motion.button>
               
@@ -348,7 +493,7 @@ function CTA() {
                 whileTap={{ scale: 0.95 }}
                 className="glass-card hover:bg-secondary px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
               >
-                <span>Google Play</span>
+                <span>View Sample Feed</span>
                 <ArrowRight size={20} />
               </motion.button>
             </div>
@@ -368,7 +513,7 @@ function Footer() {
           <div className="md:col-span-2">
             <span className="text-2xl font-bold gradient-text">Ferel</span>
             <p className="text-gray-400 mt-4 max-w-md">
-              AI-powered financial intelligence for modern investors.
+              Curated news intelligence for decision makers. High-signal macro and geopolitical coverage.
             </p>
           </div>
           
@@ -376,8 +521,9 @@ function Footer() {
             <h4 className="font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-gray-400">
               <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
-              <li><a href="#markets" className="hover:text-primary transition-colors">Markets</a></li>
-              <li><a href="#download" className="hover:text-primary transition-colors">Download</a></li>
+              <li><a href="#pulse" className="hover:text-primary transition-colors">Pulse</a></li>
+              <li><a href="#macro" className="hover:text-primary transition-colors">Macro</a></li>
+              <li><a href="#download" className="hover:text-primary transition-colors">Early Access</a></li>
             </ul>
           </div>
           
@@ -406,7 +552,9 @@ export default function Page() {
       <Navbar />
       <Hero />
       <Features />
-      <Markets />
+      <Pulse />
+      <Macro />
+      <About />
       <CTA />
       <Footer />
     </div>
