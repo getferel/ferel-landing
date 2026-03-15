@@ -109,9 +109,7 @@ function Navbar() {
 // Hero Section
 function Hero() {
   return (
-    <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-hero-gradient opacity-50" />
+    <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
       
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -464,10 +462,8 @@ function CTA() {
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
-          className="glass-card p-12 rounded-3xl text-center relative overflow-hidden"
+          className="glass-card p-12 rounded-3xl text-center"
         >
-          {/* Background glow */}
-          <div className="absolute inset-0 bg-gradient-radial from-primary/20 to-transparent" />
           
           <div className="relative z-10">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
