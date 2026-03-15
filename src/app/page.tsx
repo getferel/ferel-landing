@@ -57,7 +57,7 @@ function NewsPulseItem({ time, headline, impact, category }: { time: string; hea
 }
 
 // Navigation
-function Navbar() {
+function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -74,7 +74,7 @@ function Navbar() {
               <a href="#pulse" className="hover:text-primary transition-colors">Pulse</a>
               <a href="#macro" className="hover:text-primary transition-colors">Macro</a>
               <a href="#about" className="hover:text-primary transition-colors">About</a>
-              <button onClick={() => setIsModalOpen(true)} className="bg-primary hover:bg-accent text-background px-4 py-2 rounded-lg font-semibold transition-all">
+              <button onClick={onOpenModal} className="bg-primary hover:bg-accent text-background px-4 py-2 rounded-lg font-semibold transition-all">
                 Get Early Access
               </button>
             </div>
@@ -507,7 +507,7 @@ function CTA({ onOpen }: { onOpen: () => void }) {
 }
 
 // Footer
-function Footer() {
+function Footer({ onOpenModal }: { onOpenModal: () => void }) {
   return (
     <footer className="py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
       <div className="max-w-7xl mx-auto">
@@ -525,7 +525,7 @@ function Footer() {
               <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
               <li><a href="#pulse" className="hover:text-primary transition-colors">Pulse</a></li>
               <li><a href="#macro" className="hover:text-primary transition-colors">Macro</a></li>
-              <li><button onClick={() => setIsModalOpen(true)} className="hover:text-primary transition-colors">Early Access</button></li>
+              <li><button onClick={onOpenModal} className="hover:text-primary transition-colors">Early Access</button></li>
             </ul>
           </div>
           
@@ -553,7 +553,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
+      <Navbar onOpenModal={() => setIsModalOpen(true)} />
       <EarlyAccessModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <Hero />
       <Features />
@@ -561,7 +561,7 @@ export default function Page() {
       <Macro />
       <About />
       <CTA onOpen={() => setIsModalOpen(true)} />
-      <Footer />
+      <Footer onOpenModal={() => setIsModalOpen(true)} />
     </div>
   );
 }
