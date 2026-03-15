@@ -92,30 +92,30 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
   return (
     <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           {/* Left: Copy + Email Capture */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="space-y-8 lg:pr-8"
           >
             <div className="inline-flex items-center space-x-2 glass-card px-4 py-2 rounded-full">
               <span className="w-2 h-2 bg-primary rounded-full live-indicator" />
               <span className="text-sm font-medium">Live Intelligence Feed</span>
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+            <h1 className="text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight">
               Market Intelligence{" "}
               <span className="gradient-text">Before It Becomes Noise</span>
             </h1>
             
-            <p className="text-xl text-gray-400 max-w-lg leading-relaxed">
+            <p className="text-lg lg:text-xl text-gray-400 leading-relaxed max-w-xl">
               We source, analyze, and publish high-signal macro and geopolitical news. Get the intelligence that moves markets, delivered with context.
             </p>
             
             {/* Email Capture */}
-            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-xl">
               <input
                 type="email"
                 value={email}
@@ -158,13 +158,13 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="relative"
+            className="relative flex justify-center lg:justify-end"
           >
             {/* Floating effect */}
             <motion.div
               animate={{ y: [-10, 10, -10] }}
               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="relative mx-auto"
+              className="relative"
             >
               <div className="relative border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-2xl shadow-primary/20">
                 <div className="h-[32px] w-[3px] bg-gray-800 absolute -left-[17px] top-[72px] rounded-l-lg"></div>
