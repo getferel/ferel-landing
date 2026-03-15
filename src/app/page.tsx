@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Globe, 
   Brain, 
@@ -14,47 +14,14 @@ import {
   Menu,
   X,
   CheckCircle,
-  Clock
+  Clock,
+  Filter,
+  Activity,
+  Newspaper,
+  AlertTriangle
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import EarlyAccessModal from "@/components/EarlyAccessModal";
-
-// Timeline/Feed component for news pulse
-function NewsPulseItem({ time, headline, impact, category }: { time: string; headline: string; impact: "Critical" | "High" | "Neutral"; category: string }) {
-  const impactColors = {
-    Critical: "bg-red-500/20 text-red-400 border-red-500/30",
-    High: "bg-amber-500/20 text-amber-400 border-amber-500/30",
-    Neutral: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-  };
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, x: -20 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      className="glass-card p-4 rounded-xl border-l-4 border-l-primary"
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="text-xs text-gray-400 flex items-center gap-1">
-              <Clock size={12} />
-              {time}
-            </span>
-            <span className="text-xs text-primary">{category}</span>
-          </div>
-          <h4 className="font-semibold mb-2">{headline}</h4>
-          <div className="flex items-center gap-2">
-            <span className={`text-xs px-2 py-1 rounded-full border ${impactColors[impact]}`}>
-              Impact: {impact}
-            </span>
-            <span className="text-xs text-gray-400">Actionable Intelligence</span>
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
 
 // Navigation
 function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
@@ -69,12 +36,11 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
           </div>
           
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
-              <a href="#features" className="hover:text-primary transition-colors">Features</a>
-              <a href="#pulse" className="hover:text-primary transition-colors">Pulse</a>
-              <a href="#macro" className="hover:text-primary transition-colors">Macro</a>
-              <a href="#about" className="hover:text-primary transition-colors">About</a>
-              <button onClick={onOpenModal} className="bg-primary hover:bg-accent text-background px-4 py-2 rounded-lg font-semibold transition-all">
+            <div className="ml-10 flex items-center space-x-8">
+              <a href="#pulse" className="text-sm text-gray-400 hover:text-primary transition-colors">Pulse</a>
+              <a href="#features" className="text-sm text-gray-400 hover:text-primary transition-colors">Features</a>
+              <a href="#sources" className="text-sm text-gray-400 hover:text-primary transition-colors">Sources</a>
+              <button onClick={onOpenModal} className="bg-primary hover:bg-accent text-background px-5 py-2 rounded-lg text-sm font-semibold transition-all">
                 Get Early Access
               </button>
             </div>
@@ -95,11 +61,10 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
           className="md:hidden glass-card border-t"
         >
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <a href="#features" className="block px-3 py-2 hover:bg-secondary rounded">Features</a>
             <a href="#pulse" className="block px-3 py-2 hover:bg-secondary rounded">Pulse</a>
-            <a href="#macro" className="block px-3 py-2 hover:bg-secondary rounded">Macro</a>
-            <a href="#about" className="block px-3 py-2 hover:bg-secondary rounded">About</a>
-            <a href="#download" className="block px-3 py-2 text-primary font-semibold">Get Early Access</a>
+            <a href="#features" className="block px-3 py-2 hover:bg-secondary rounded">Features</a>
+            <a href="#sources" className="block px-3 py-2 hover:bg-secondary rounded">Sources</a>
+            <button onClick={onOpenModal} className="w-full text-left px-3 py-2 text-primary font-semibold">Get Early Access</button>
           </div>
         </motion.div>
       )}
@@ -107,13 +72,28 @@ function Navbar({ onOpenModal }: { onOpenModal: () => void }) {
   );
 }
 
-// Hero Section
+// Hero Section - 60/40 Split with Email Capture
 function Hero({ onOpenModal }: { onOpenModal: () => void }) {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setSubmitted(true);
+      setTimeout(() => {
+        onOpenModal();
+        setSubmitted(false);
+        setEmail("");
+      }, 1500);
+    }
+  };
+
   return (
-    <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative">
-      
+    <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Left: Copy + Email Capture */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -125,82 +105,104 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
               <span className="text-sm font-medium">Live Intelligence Feed</span>
             </div>
             
-            <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-              Be the First to Know{" "}
-              <span className="gradient-text">What Moves the Markets</span>
+            <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
+              Market Intelligence{" "}
+              <span className="gradient-text">Before It Becomes Noise</span>
             </h1>
             
-            <p className="text-xl text-gray-400 max-w-lg">
-              A curated news engine delivering high-signal macro and geopolitical intelligence. We source, analyze, and publish the stories that matter before they become noise.
+            <p className="text-xl text-gray-400 max-w-lg leading-relaxed">
+              We source, analyze, and publish high-signal macro and geopolitical news. Get the intelligence that moves markets, delivered with context.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4">
+            {/* Email Capture */}
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                className="flex-1 bg-secondary/50 border border-gray-700 rounded-xl px-5 py-4 text-foreground placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
+              />
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={onOpenModal}
-                className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
+                type="submit"
+                className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all flex items-center justify-center space-x-2 whitespace-nowrap"
               >
-                <span>Get Early Access</span>
-                <ArrowRight size={20} />
+                {submitted ? (
+                  <span>Opening...</span>
+                ) : (
+                  <>
+                    <span>Join Waitlist</span>
+                    <ArrowRight size={20} />
+                  </>
+                )}
               </motion.button>
-            </div>
+            </form>
             
             <div className="pt-4 flex items-center gap-6 text-sm text-gray-400">
               <div className="flex items-center gap-2">
                 <CheckCircle size={16} className="text-primary" />
-                <span>AI-Powered Curation</span>
+                <span>Editorial Curation</span>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircle size={16} className="text-primary" />
-                <span>Editorial Intelligence</span>
+                <span>Zero Clickbait</span>
               </div>
             </div>
           </motion.div>
           
-          {/* Phone Mockup - News Feed UI */}
+          {/* Right: Floating Phone Mockup */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
             className="relative"
           >
-            <div className="relative mx-auto border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-2xl">
-              <div className="h-[32px] w-[3px] bg-gray-800 absolute -left-[17px] top-[72px] rounded-l-lg"></div>
-              <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[124px] rounded-l-lg"></div>
-              <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[178px] rounded-l-lg"></div>
-              <div className="h-[64px] w-[3px] bg-gray-800 absolute -right-[17px] top-[142px] rounded-r-lg"></div>
-              <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-background relative">
-                {/* App UI Mockup - News Feed */}
-                <div className="p-4 space-y-4">
-                  <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-lg font-bold">Breaking Intelligence</h3>
-                    <span className="text-xs text-primary">LIVE</span>
-                  </div>
-                  
-                  {/* News Cards */}
-                  <div className="space-y-3">
-                    <div className="glass-card p-3 rounded-lg border-l-4 border-l-primary">
-                      <div className="text-xs text-gray-400 mb-1">Geopolitical</div>
-                      <div className="text-sm font-semibold">RBI Policy Shift</div>
-                      <div className="text-xs text-red-400 mt-1">Impact: Critical</div>
+            {/* Floating effect */}
+            <motion.div
+              animate={{ y: [-10, 10, -10] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="relative mx-auto"
+            >
+              <div className="relative border-gray-800 bg-gray-800 border-[14px] rounded-[2.5rem] h-[600px] w-[300px] shadow-2xl shadow-primary/20">
+                <div className="h-[32px] w-[3px] bg-gray-800 absolute -left-[17px] top-[72px] rounded-l-lg"></div>
+                <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[124px] rounded-l-lg"></div>
+                <div className="h-[46px] w-[3px] bg-gray-800 absolute -left-[17px] top-[178px] rounded-l-lg"></div>
+                <div className="h-[64px] w-[3px] bg-gray-800 absolute -right-[17px] top-[142px] rounded-r-lg"></div>
+                <div className="rounded-[2rem] overflow-hidden w-[272px] h-[572px] bg-background relative">
+                  {/* App UI - Pulse Feed */}
+                  <div className="p-4 space-y-4">
+                    <div className="flex justify-between items-center mb-6">
+                      <h3 className="text-lg font-bold">Breaking Intelligence</h3>
+                      <span className="text-xs text-primary">LIVE</span>
                     </div>
                     
-                    <div className="glass-card p-3 rounded-lg border-l-4 border-l-amber-500">
-                      <div className="text-xs text-gray-400 mb-1">Global Macro</div>
-                      <div className="text-sm font-semibold">Trade Agreement Update</div>
-                      <div className="text-xs text-amber-400 mt-1">Impact: High</div>
-                    </div>
-                    
-                    <div className="glass-card p-3 rounded-lg border-l-4 border-l-gray-500">
-                      <div className="text-xs text-gray-400 mb-1">Market News</div>
-                      <div className="text-sm font-semibold">Sector Analysis</div>
-                      <div className="text-xs text-gray-400 mt-1">Impact: Neutral</div>
+                    {/* News Cards */}
+                    <div className="space-y-3">
+                      <div className="glass-card p-3 rounded-lg border-l-4 border-l-red-500">
+                        <div className="text-xs text-gray-400 mb-1">Geopolitical</div>
+                        <div className="text-sm font-semibold">RBI Policy Shift</div>
+                        <div className="text-xs text-red-400 mt-1">Impact: Critical</div>
+                      </div>
+                      
+                      <div className="glass-card p-3 rounded-lg border-l-4 border-l-amber-500">
+                        <div className="text-xs text-gray-400 mb-1">Global Macro</div>
+                        <div className="text-sm font-semibold">Trade Agreement</div>
+                        <div className="text-xs text-amber-400 mt-1">Impact: High</div>
+                      </div>
+                      
+                      <div className="glass-card p-3 rounded-lg border-l-4 border-l-gray-500">
+                        <div className="text-xs text-gray-400 mb-1">Market News</div>
+                        <div className="text-sm font-semibold">Sector Analysis</div>
+                        <div className="text-xs text-gray-400 mt-1">Impact: Neutral</div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -208,43 +210,154 @@ function Hero({ onOpenModal }: { onOpenModal: () => void }) {
   );
 }
 
-// Features Section - Editorial Intelligence
+// Animated News Feed Component
+function NewsFeedItem({ time, headline, impact, category, soWhat, delay }: { time: string; headline: string; impact: "Critical" | "High" | "Neutral"; category: string; soWhat: string; delay: number }) {
+  const impactColors = {
+    Critical: "bg-red-500/20 text-red-400 border-red-500/30",
+    High: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+    Neutral: "bg-gray-500/20 text-gray-400 border-gray-500/30",
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay }}
+      className="glass-card p-6 rounded-2xl border-l-4 border-l-primary hover:scale-[1.02] transition-all duration-300"
+    >
+      <div className="flex items-start justify-between gap-4 mb-3">
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-gray-400 flex items-center gap-1">
+            <Clock size={12} />
+            {time}
+          </span>
+          <span className="text-xs text-primary">{category}</span>
+        </div>
+      </div>
+      
+      <h4 className="text-lg font-semibold mb-3">{headline}</h4>
+      
+      <div className="flex flex-wrap items-center gap-3 mb-3">
+        <span className={`text-xs px-3 py-1.5 rounded-full border ${impactColors[impact]}`}>
+          Impact: {impact}
+        </span>
+        <div className="flex items-center gap-2 text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full">
+          <Target size={12} />
+          <span>So What? {soWhat}</span>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// Pulse Section - Animated Live Feed
+function Pulse({ onOpenModal }: { onOpenModal: () => void }) {
+  const newsItems = [
+    { time: "2 min ago", headline: "RBI announces unexpected policy shift on repo rates", impact: "Critical" as const, category: "Monetary Policy", soWhat: "Watch for volatility in banking stocks" },
+    { time: "15 min ago", headline: "New trade agreement signed between India and UAE", impact: "High" as const, category: "Global Trade", soWhat: "Energy sector likely to benefit" },
+    { time: "32 min ago", headline: "Tech sector sees institutional buying surge", impact: "High" as const, category: "Market Movement", soWhat: "NIFTY IT may outperform today" },
+    { time: "1 hr ago", headline: "Oil prices stabilize amid geopolitical tensions", impact: "Neutral" as const, category: "Commodities", soWhat: "Monitor inflation data" },
+  ];
+
+  return (
+    <section id="pulse" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
+      <div className="max-w-7xl mx-auto">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <div className="inline-flex items-center gap-2 glass-card px-4 py-2 rounded-full mb-6">
+            <span className="w-2 h-2 bg-primary rounded-full live-indicator" />
+            <span className="text-sm font-medium">Live Feed</span>
+          </div>
+          <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+            The{" "}
+            <span className="gradient-text">Pulse</span>
+          </h2>
+          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+            Real-time curated intelligence. Every story tagged with impact level and actionable context.
+          </p>
+        </motion.div>
+        
+        <div className="max-w-3xl mx-auto space-y-4">
+          {newsItems.map((item, i) => (
+            <NewsFeedItem
+              key={i}
+              time={item.time}
+              headline={item.headline}
+              impact={item.impact}
+              category={item.category}
+              soWhat={item.soWhat}
+              delay={i * 0.15}
+            />
+          ))}
+        </div>
+        
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mt-12"
+        >
+          <button 
+            onClick={onOpenModal}
+            className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all inline-flex items-center gap-2"
+          >
+            <span>Get Full Access</span>
+            <ArrowRight size={20} />
+          </button>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Bento Grid Features Section
 function Features() {
   const features = [
     {
-      icon: Layers,
-      title: "Editorial Curation",
-      description: "Our team and AI filter out the noise. Only high-signal, market-moving stories make the cut.",
+      icon: Newspaper,
+      title: "Editorial Intelligence",
+      description: "Our team and AI filter 1,000s of stories daily. Only high-signal, market-moving intelligence makes the cut.",
+      size: "large",
     },
     {
-      icon: Brain,
-      title: "AI-Powered Analysis",
-      description: "Beyond headlines—sentiment analysis, impact scoring, and contextual intelligence.",
+      icon: Activity,
+      title: "Impact Scoring",
+      description: "Every story tagged: Critical, High, or Neutral. Know what matters before you read.",
+      size: "medium",
     },
     {
       icon: Globe,
-      title: "Global Macro Focus",
-      description: "Specialized coverage of policy changes, trade news, and international relations.",
+      title: "Macro & Geopolitical",
+      description: "Deep coverage of policy changes, trade news, and international relations that shape markets.",
+      size: "medium",
     },
     {
-      icon: Target,
-      title: "Actionable Intelligence",
-      description: "Every story explains why it matters to investors and what to watch next.",
+      icon: Filter,
+      title: "Zero Clickbait",
+      description: "No noise. No fluff. Only actionable intelligence.",
+      size: "small",
+    },
+    {
+      icon: Zap,
+      title: "Real-time Alerts",
+      description: "Be first to know when critical intelligence breaks.",
+      size: "small",
     },
     {
       icon: Shield,
       title: "Verified Sources",
-      description: "Curated from premium outlets, official statements, and verified channels only.",
-    },
-    {
-      icon: Zap,
-      title: "Real-Time Alerts",
-      description: "Be first to know when critical intelligence breaks—before it becomes mainstream.",
+      description: "Curated from premium outlets, official statements, verified channels.",
+      size: "small",
     },
   ];
 
   return (
-    <section id="features" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
+    <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -257,25 +370,72 @@ function Features() {
             <span className="gradient-text">Not Noise</span>
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            We curate, analyze, and deliver only the stories that move markets. No clickbait, no fluff.
+            We curate, analyze, and deliver only the stories that move markets.
           </p>
         </motion.div>
         
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature, index) => (
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Large Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="md:col-span-2 glass-card p-8 rounded-2xl hover:scale-[1.02] transition-all duration-300"
+          >
+            <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
+              <Newspaper className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4">Editorial Intelligence</h3>
+            <p className="text-gray-400 text-lg">
+              Our team and AI filter 1,000s of stories daily. We source from premium outlets, official statements, and verified channels. Only high-signal, market-moving intelligence makes the cut—delivering context, not just headlines.
+            </p>
+          </motion.div>
+          
+          {/* Medium Cards */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="glass-card p-6 rounded-2xl hover:scale-[1.02] transition-all duration-300"
+          >
+            <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4">
+              <Activity className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Impact Scoring</h3>
+            <p className="text-gray-400">Every story tagged: Critical, High, or Neutral. Know what matters before you read.</p>
+          </motion.div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="md:col-span-2 glass-card p-6 rounded-2xl hover:scale-[1.02] transition-all duration-300"
+          >
+            <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4">
+              <Globe className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold mb-3">Macro & Geopolitical</h3>
+            <p className="text-gray-400">Deep coverage of policy changes, trade news, and international relations that shape markets—from central banks to trading floors.</p>
+          </motion.div>
+          
+          {/* Small Cards */}
+          {features.slice(3).map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="glass-card p-8 rounded-2xl hover:scale-105 transition-all duration-300"
+              transition={{ delay: 0.3 + index * 0.1 }}
+              className="glass-card p-6 rounded-2xl hover:scale-[1.02] transition-all duration-300"
             >
-              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
-                <feature.icon className="w-6 h-6 text-primary" />
+              <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center mb-4">
+                <feature.icon className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-              <p className="text-gray-400">{feature.description}</p>
+              <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
+              <p className="text-gray-400 text-sm">{feature.description}</p>
             </motion.div>
           ))}
         </div>
@@ -284,124 +444,42 @@ function Features() {
   );
 }
 
-// Pulse Section - Live Feed
-function Pulse({ onOpenModal }: { onOpenModal: () => void }) {
-  const newsItems = [
-    { time: "2 min ago", headline: "RBI announces unexpected policy shift on repo rates", impact: "Critical", category: "Monetary Policy" },
-    { time: "15 min ago", headline: "New trade agreement signed between India and UAE", impact: "High", category: "Global Trade" },
-    { time: "32 min ago", headline: "Tech sector sees institutional buying surge", impact: "High", category: "Market Movement" },
-    { time: "1 hr ago", headline: "Oil prices stabilize amid geopolitical tensions", impact: "Neutral", category: "Commodities" },
+// Trust Bar - Source Logos
+function Sources() {
+  const sources = [
+    "Reserve Bank of India",
+    "Ministry of Finance",
+    "Bloomberg",
+    "Reuters",
+    "Economic Times",
+    "Financial Times",
+    "SEBI",
+    "World Bank",
   ];
 
   return (
-    <section id="pulse" className="py-20 px-4 sm:px-6 lg:px-8">
+    <section id="sources" className="py-16 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
       <div className="max-w-7xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-            The{" "}
-            <span className="gradient-text">Pulse</span>
-          </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Live feed of curated intelligence. Every story tagged with impact level and actionable context.
-          </p>
-        </motion.div>
-        
-        <div className="max-w-3xl mx-auto space-y-4">
-          {newsItems.map((item, i) => (
-            <NewsPulseItem
-              key={i}
-              time={item.time}
-              headline={item.headline}
-              impact={item.impact as "Critical" | "High" | "Neutral"}
-              category={item.category}
-            />
-          ))}
-        </div>
-        
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mb-12"
         >
-          <p className="text-gray-400 mb-6">This is just a sample. Get full access to the live feed.</p>
-          <button 
-            onClick={onOpenModal}
-            className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold transition-all"
-          >
-            Join Waitlist
-          </button>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
-
-// Macro & Geopolitical Section
-function Macro() {
-  const macroTopics = [
-    {
-      icon: Globe,
-      title: "Geopolitical Shifts",
-      items: ["International relations", "Trade agreements", "Policy changes", "Diplomatic developments"],
-    },
-    {
-      icon: TrendingUp,
-      title: "Global Macro Trends",
-      items: ["Central bank policies", "Interest rate decisions", "Inflation data", "Economic indicators"],
-    },
-    {
-      icon: Layers,
-      title: "Sector Intelligence",
-      items: ["Industry analysis", "Regulatory updates", "Market positioning", "Competitive landscape"],
-    },
-  ];
-
-  return (
-    <section id="macro" className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
-      <div className="max-w-7xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
-        >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-4">
-            Macro &{" "}
-            <span className="gradient-text">Geopolitical</span>
-          </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Deep coverage of the forces that shape markets—from policy rooms to trading floors.
-          </p>
+          <p className="text-sm text-gray-400 uppercase tracking-wider">Sources We Monitor</p>
         </motion.div>
         
-        <div className="grid md:grid-cols-3 gap-8">
-          {macroTopics.map((topic, index) => (
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-50 grayscale hover:grayscale-0 transition-all duration-500">
+          {sources.map((source, i) => (
             <motion.div
-              key={topic.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
+              key={source}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
-              className="glass-card p-8 rounded-2xl"
+              transition={{ delay: i * 0.05 }}
+              className="text-sm md:text-base text-gray-500 font-medium"
             >
-              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-6">
-                <topic.icon className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold mb-4">{topic.title}</h3>
-              <ul className="space-y-2 text-gray-400">
-                {topic.items.map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <CheckCircle size={16} className="text-primary" />
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
+              {source}
             </motion.div>
           ))}
         </div>
@@ -410,40 +488,91 @@ function Macro() {
   );
 }
 
-// About Section
-function About() {
+// Noise vs Signal Comparison
+function Comparison() {
   return (
-    <section id="about" className="py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
+    <section className="py-20 px-4 sm:px-6 lg:px-8 bg-secondary/20">
+      <div className="max-w-5xl mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center"
+          className="text-center mb-16"
         >
-          <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-            Built for{" "}
-            <span className="gradient-text">Decision Makers</span>
+          <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+            From{" "}
+            <span className="text-red-400">Noise</span>{" "}
+            to{" "}
+            <span className="gradient-text">Signal</span>
           </h2>
-          <p className="text-xl text-gray-400 mb-8">
-            Ferel is a curated news intelligence platform by Ferelvian. We combine editorial expertise with AI-powered analysis to deliver only the stories that matter—before they become mainstream noise.
+          <p className="text-xl text-gray-400">
+            How we filter 1,000s of stories into 5 actionable intelligence pieces.
           </p>
-          
-          <div className="grid md:grid-cols-3 gap-8 mt-12">
-            <div className="text-center">
-              <div className="text-4xl font-bold gradient-text mb-2">100%</div>
-              <div className="text-gray-400">Curated Stories</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold gradient-text mb-2">24/7</div>
-              <div className="text-gray-400">Live Intelligence</div>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl font-bold gradient-text mb-2">0</div>
-              <div className="text-gray-400">Noise & Clickbait</div>
-            </div>
-          </div>
         </motion.div>
+        
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Noise Side */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 rounded-2xl border border-red-500/20"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <AlertTriangle className="w-6 h-6 text-red-400" />
+              <h3 className="text-2xl font-bold text-red-400">The Noise</h3>
+            </div>
+            <ul className="space-y-4 text-gray-400">
+              <li className="flex items-start gap-3">
+                <X className="w-5 h-5 text-red-400 mt-0.5" />
+                <span>1,000s of daily headlines with no context</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <X className="w-5 h-5 text-red-400 mt-0.5" />
+                <span>Clickbait and sensationalism</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <X className="w-5 h-5 text-red-400 mt-0.5" />
+                <span>No impact analysis or actionable insights</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <X className="w-5 h-5 text-red-400 mt-0.5" />
+                <span>Overwhelming information overload</span>
+              </li>
+            </ul>
+          </motion.div>
+          
+          {/* Signal Side */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 rounded-2xl border border-primary/30"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <CheckCircle className="w-6 h-6 text-primary" />
+              <h3 className="text-2xl font-bold text-primary">The Signal</h3>
+            </div>
+            <ul className="space-y-4 text-gray-300">
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                <span>5 curated stories with full context</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                <span>Verified sources only, zero clickbait</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                <span>Impact scoring + "So What?" analysis</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <CheckCircle className="w-5 h-5 text-primary mt-0.5" />
+                <span>Actionable intelligence for decision makers</span>
+              </li>
+            </ul>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -460,7 +589,6 @@ function CTA({ onOpen }: { onOpen: () => void }) {
           viewport={{ once: true }}
           className="glass-card p-12 rounded-3xl text-center"
         >
-          
           <div className="relative z-10">
             <h2 className="text-4xl lg:text-5xl font-bold mb-6">
               Ready to{" "}
@@ -470,17 +598,15 @@ function CTA({ onOpen }: { onOpen: () => void }) {
               Join early access and get curated market intelligence delivered before it becomes noise.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.button 
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={onOpen}
-                className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all flex items-center justify-center space-x-2"
-              >
-                <span>Get Early Access</span>
-                <ArrowRight size={20} />
-              </motion.button>
-            </div>
+            <motion.button 
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={onOpen}
+              className="bg-primary hover:bg-accent text-background px-8 py-4 rounded-xl font-bold text-lg transition-all inline-flex items-center gap-2"
+            >
+              <span>Get Early Access</span>
+              <ArrowRight size={20} />
+            </motion.button>
           </div>
         </motion.div>
       </div>
@@ -504,9 +630,9 @@ function Footer({ onOpenModal }: { onOpenModal: () => void }) {
           <div>
             <h4 className="font-semibold mb-4">Product</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
               <li><a href="#pulse" className="hover:text-primary transition-colors">Pulse</a></li>
-              <li><a href="#macro" className="hover:text-primary transition-colors">Macro</a></li>
+              <li><a href="#features" className="hover:text-primary transition-colors">Features</a></li>
+              <li><a href="#sources" className="hover:text-primary transition-colors">Sources</a></li>
               <li><button onClick={onOpenModal} className="hover:text-primary transition-colors">Early Access</button></li>
             </ul>
           </div>
@@ -538,10 +664,10 @@ export default function Page() {
       <Navbar onOpenModal={() => setIsModalOpen(true)} />
       <EarlyAccessModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <Hero onOpenModal={() => setIsModalOpen(true)} />
-      <Features />
       <Pulse onOpenModal={() => setIsModalOpen(true)} />
-      <Macro />
-      <About />
+      <Features />
+      <Sources />
+      <Comparison />
       <CTA onOpen={() => setIsModalOpen(true)} />
       <Footer onOpenModal={() => setIsModalOpen(true)} />
     </div>
