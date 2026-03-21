@@ -642,6 +642,7 @@ function Footer({ onOpenModal }: { onOpenModal: () => void }) {
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-gray-400">
               <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link></li>
+              <li><Link href="/account-deletion" className="hover:text-primary transition-colors">Delete Account</Link></li>
               <li><a href="#" className="hover:text-primary transition-colors">Terms</a></li>
               <li>© 2026 Ferelvian</li>
             </ul>
