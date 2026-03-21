@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import { 
   Globe, 
   Brain, 
@@ -640,7 +641,7 @@ function Footer({ onOpenModal }: { onOpenModal: () => void }) {
           <div>
             <h4 className="font-semibold mb-4">Legal</h4>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-primary transition-colors">Privacy</a></li>
+              <li><Link href="/privacy" className="hover:text-primary transition-colors">Privacy</Link></li>
               <li><a href="#" className="hover:text-primary transition-colors">Terms</a></li>
               <li>© 2026 Ferelvian</li>
             </ul>
