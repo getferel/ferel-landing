@@ -14,6 +14,9 @@ export const metadata: Metadata = {
     description: "Real-time market intelligence powered by AI",
     type: "website",
   },
+  verification: {
+    google: "gwJEkic5PbVWrM3Hv4rfKSLIKnGZ1y270R1Bes5ZfqQ",
+  },
 };
 
 export default function RootLayout({
