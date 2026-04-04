@@ -3,11 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --background: #0B1120;
-  --foreground: #F8FAFC;
-  --primary: #10B981;
-  --secondary: #1E293B;
-  --accent: #34D399;
+  --background: #000000;
+  --foreground: #FFFFFF;
+  --primary: #00C853;
+  --primary-dim: #00A844;
+  --secondary: #0A0A0A;
+  --accent: #FF6F00;
+  --surface: #111111;
+  --surface-elevated: #1A1A1A;
+  --border: #222222;
+  --border-subtle: #1A1A1A;
+  --text-primary: #FFFFFF;
+  --text-secondary: #999999;
+  --text-tertiary: #666666;
+  --text-muted: #444444;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #333 transparent;
 }
 
 body {
@@ -15,40 +29,168 @@ body {
   color: var(--foreground);
 }
 
-.glass-card {
-  background: rgba(30, 41, 59, 0.3);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+/* Terminal-style scrolling ticker */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
-.glass-card:hover {
-  background: rgba(30, 41, 59, 0.5);
-  border-color: rgba(16, 185, 129, 0.2);
+.ticker-scroll {
+  animation: ticker-scroll 30s linear infinite;
 }
 
+.ticker-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Gradient text - primary green */
 .gradient-text {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #00C853 0%, #69F0AE 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.sparkline {
-  stroke: #10B981;
-  stroke-width: 2;
-  fill: none;
+/* Gradient text - accent warm */
+.gradient-text-warm {
+  background: linear-gradient(135deg, #FF6F00 0%, #FFA726 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
+/* Surface card */
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.surface-card:hover {
+  border-color: #333;
+  background: var(--surface-elevated);
+}
+
+/* Elevated card */
+.surface-elevated {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+}
+
+/* Terminal grid lines */
+.terminal-grid {
+  background-image:
+    linear-gradient(rgba(0, 200, 83, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 200, 83, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Live pulse */
 @keyframes pulse-live {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .live-indicator {
   animation: pulse-live 2s ease-in-out infinite;
+}
+
+/* Glow effects */
+.glow-green {
+  box-shadow: 0 0 20px rgba(0, 200, 83, 0.15), 0 0 60px rgba(0, 200, 83, 0.05);
+}
+
+.glow-green-strong {
+  box-shadow: 0 0 30px rgba(0, 200, 83, 0.25), 0 0 80px rgba(0, 200, 83, 0.1);
+}
+
+/* Data line animation */
+@keyframes data-line {
+  0% { width: 0; }
+  100% { width: 100%; }
+}
+
+.data-line {
+  animation: data-line 2s ease-out forwards;
+}
+
+/* Stat counter animation */
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stat-animate {
+  animation: count-up 0.6s ease-out forwards;
+}
+
+/* Scan line effect for terminal feel */
+.scan-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 200, 83, 0.1), transparent);
+  animation: scan 4s linear infinite;
+}
+
+@keyframes scan {
+  0% { top: 0; }
+  100% { top: 100%; }
+}
+
+/* Monospace data style */
+.font-mono-data {
+  font-family: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Button styles */
+.btn-primary {
+  background: var(--primary);
+  color: #000;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #00E65C;
+  box-shadow: 0 0 20px rgba(0, 200, 83, 0.3);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-outline:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Horizontal rule */
+.divider {
+  height: 1px;
+  background: var(--border);
+}
+
+/* Badge styles */
+.badge {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Number display */
+.number-display {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }

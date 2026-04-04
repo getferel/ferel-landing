@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { X } from "lucide-react";
+import { X, ArrowRight, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -68,124 +68,128 @@ export default function EarlyAccessModal({ isOpen, onClose }: EarlyAccessModalPr
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
           onClick={onClose}
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            initial={{ opacity: 0, scale: 0.96, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            className="glass-card p-8 rounded-2xl w-full max-w-md relative"
+            exit={{ opacity: 0, scale: 0.96, y: 10 }}
+            transition={{ duration: 0.2 }}
+            className="bg-surface border border-border rounded-lg w-full max-w-md relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button */}
-            <button
-              onClick={onClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
-            >
-              <X size={24} />
-            </button>
+            {/* Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+              <div>
+                <h3 className="text-lg font-bold text-white">Request Early Access</h3>
+                <p className="text-xs text-gray-500 mt-0.5">Join the waitlist for Ferel Intelligence</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-gray-600 hover:text-white transition-colors p-1"
+              >
+                <X size={18} />
+              </button>
+            </div>
 
             {submitted ? (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="text-center py-8"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="px-6 py-16 text-center"
               >
-                <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <X className="w-8 h-8 text-primary" style={{ transform: "rotate(45deg)" }} />
+                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle size={28} className="text-primary" />
                 </div>
-                <h3 className="text-2xl font-bold mb-2">You're on the list!</h3>
-                <p className="text-gray-400">We'll be in touch soon.</p>
+                <h3 className="text-xl font-bold mb-2">You&apos;re on the list</h3>
+                <p className="text-sm text-gray-500">We&apos;ll be in touch with early access details.</p>
               </motion.div>
             ) : (
-              <>
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold mb-2">Get Early Access</h3>
-                  <p className="text-gray-400">Join the waitlist for curated market intelligence.</p>
+              <form onSubmit={handleSubmit} className="px-6 py-6 space-y-4">
+                <div>
+                  <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-black border border-border rounded px-4 py-3 text-white text-sm placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
+                    placeholder="John Doe"
+                  />
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Full Name</label>
-                    <input
-                      type="text"
-                      name="fullName"
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-secondary/50 border border-gray-700 rounded-lg px-4 py-3 text-foreground placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
-                      placeholder="John Doe"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-black border border-border rounded px-4 py-3 text-white text-sm placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
+                    placeholder="john@example.com"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-secondary/50 border border-gray-700 rounded-lg px-4 py-3 text-foreground placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
-                      placeholder="john@example.com"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-black border border-border rounded px-4 py-3 text-white text-sm placeholder-gray-700 focus:outline-none focus:border-primary transition-colors"
+                    placeholder="+91 98765 43210"
+                  />
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Phone Number</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      required
-                      className="w-full bg-secondary/50 border border-gray-700 rounded-lg px-4 py-3 text-foreground placeholder-gray-500 focus:outline-none focus:border-primary transition-colors"
-                      placeholder="+91 98765 43210"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium mb-2">Country</label>
-                    <select
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      className="w-full bg-secondary/50 border border-gray-700 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-primary transition-colors"
-                    >
-                      {countries.map((country) => (
-                        <option key={country} value={country}>
-                          {country}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {error && (
-                    <div className="text-red-400 text-sm bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-3">
-                      {error}
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-primary hover:bg-accent disabled:bg-gray-600 disabled:cursor-not-allowed text-background font-bold py-4 rounded-lg transition-all flex items-center justify-center gap-2"
+                <div>
+                  <label className="block text-xs font-mono text-gray-500 uppercase tracking-wider mb-2">Country</label>
+                  <select
+                    name="country"
+                    value={formData.country}
+                    onChange={handleChange}
+                    className="w-full bg-black border border-border rounded px-4 py-3 text-white text-sm focus:outline-none focus:border-primary transition-colors"
                   >
-                    {isSubmitting ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-background/30 border-t-background rounded-full animate-spin" />
-                        <span>Submitting...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Join Waitlist</span>
-                        <X size={20} style={{ transform: "rotate(45deg)" }} />
-                      </>
-                    )}
-                  </button>
-                </form>
-              </>
+                    {countries.map((country) => (
+                      <option key={country} value={country}>
+                        {country}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {error && (
+                  <div className="text-red-400 text-xs bg-red-500/5 border border-red-500/20 rounded px-4 py-3">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full btn-primary disabled:bg-gray-800 disabled:text-gray-600 disabled:cursor-not-allowed py-3.5 rounded text-sm flex items-center justify-center gap-2 mt-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Join Waitlist</span>
+                      <ArrowRight size={16} />
+                    </>
+                  )}
+                </button>
+
+                <p className="text-center text-xs text-gray-700">
+                  Free during early access. No credit card required.
+                </p>
+              </form>
             )}
           </motion.div>
         </motion.div>
